@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import AuthProvider from "./context/AuthProvider.tsx"
 import PageProvider from "./context/PageProvider.tsx"
+import { Toaster } from "@/components/ui/toaster"
 
 export const queryClient = new QueryClient()
 
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <PageProvider>
           <AuthProvider>
             <App />
+            <Toaster />
           </AuthProvider>
         </PageProvider>
       </QueryClientProvider>

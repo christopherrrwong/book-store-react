@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button"
 import RatingStar from "./RatingStar"
+import { postBookOrder } from "@/services/api/bookapi"
+import { useAuth } from "@/context/AuthProvider"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+import { useMutation } from "@tanstack/react-query"
+import { queryClient } from "@/main"
 
 type data = {
   id: number
@@ -17,6 +23,36 @@ type BookCardItemProps = {
 }
 
 export default function BookCardContainer({ data }: BookCardItemProps) {
+  const { user_id } = useAuth()
+  const { toast } = useToast()
+
+  console.log(data)
+
+  const mutation = useMutation({
+    mutationFn: (variables: { user_id: string; book_id: string }) =>
+      postBookOrder(variables.user_id, variables.book_id),
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Book added to cart",
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["OrderHistory", user_id],
+        exact: true,
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error cancelling order",
+        description: error.message,
+      })
+    },
+  })
+
+  const handleAddBooklOrder = (user_id: string, book_id: string) => {
+    mutation.mutate({ user_id, book_id })
+  }
+
   return (
     <>
       {data.length == 0 ? (
@@ -49,7 +85,15 @@ export default function BookCardContainer({ data }: BookCardItemProps) {
                         {book.price_in_cent}$
                       </p>
                     </div>
-                    <Button className="rounded-full bg-[#ffc107]">
+                    <Button
+                      className="rounded-full bg-[#ffc107]"
+                      onClick={() =>
+                        handleAddBooklOrder(
+                          user_id?.toString() ?? "",
+                          book.id.toString()
+                        )
+                      }
+                    >
                       Add to Cart
                     </Button>
                   </div>

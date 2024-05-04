@@ -11,13 +11,17 @@ import { usePage } from "@/context/PageProvider"
 
 export default function SideBar() {
   const [open, setOpen] = useState(true)
-  const [activeTitle, setActiveTitle] = useState<string | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token")
-  )
+  const [activeTitle, setActiveTitle] = useState<string | null>("Home")
+
   const { activePage, setActivePage } = usePage()
 
-  const { token } = useAuth()
+  const { isAuthenticated, logout } = useAuth()
+
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      setActivePage("Home")
+    }
+  }, [isAuthenticated, setActivePage])
 
   const Menus = [
     {
@@ -41,13 +45,12 @@ export default function SideBar() {
   const handleTitleClick = (title: string) => {
     setActiveTitle(title)
     if (title === "Logout") {
-      localStorage.removeItem("token")
-      setIsAuthenticated(false)
+      logout()
     }
   }
 
   return (
-    <div className="flex h-screen ">
+    <div className="flex">
       <div
         className={` ${
           open ? "w-72" : "w-20 "

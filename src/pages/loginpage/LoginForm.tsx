@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 
 import { useState } from "react"
 import { postLogin } from "@/services/api/userapi"
+import { useAuth } from "@/context/AuthProvider"
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -29,7 +30,7 @@ const FormSchema = z.object({
 })
 
 export function LoginForm() {
-  const [errorMessage, setErrorMessage] = useState("")
+  const { login, errorMessage } = useAuth()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -39,22 +40,7 @@ export function LoginForm() {
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const result = await postLogin(data.email, data.password)
-
-    if (result.error) {
-      setErrorMessage(result.error)
-      setTimeout(() => {
-        setErrorMessage("")
-      }, 2000)
-    }
-
-    localStorage.setItem("username", result.username)
-    localStorage.setItem("token", result.token)
-    localStorage.setItem("id", result.id)
-
-    if (result.token) {
-      window.location.href = "/"
-    }
+    login(data.email, data.password)
   }
 
   return (
@@ -80,7 +66,7 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input placeholder="password" {...field} type="password" />
               </FormControl>
             </FormItem>
           )}

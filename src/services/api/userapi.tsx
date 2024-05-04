@@ -15,17 +15,19 @@ export async function postLogin(email: string, password: string) {
   })
 
   const result = await res.json()
-  console.log(result)
+
   return result
 }
 
-export function getUserInfo(user_id: number) {
+export function getUserInfo(user_id: string | null) {
+  if (!user_id) return []
   const { isLoading, error, data, isFetching } = useQuery({
     queryKey: ["userInfo", user_id],
     queryFn: async () => {
       const res = await fetch(`${source}/user/${user_id}`, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
 
