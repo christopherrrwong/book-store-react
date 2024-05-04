@@ -30,7 +30,12 @@ export default function BookCardContainer({ data }: BookCardItemProps) {
 
   const mutation = useMutation({
     mutationFn: (variables: { user_id: string; book_id: string }) =>
-      postBookOrder(variables.user_id, variables.book_id),
+      postBookOrder(variables.user_id, variables.book_id).then((res) => {
+        if (res.msg == "Permission Denied") {
+          window.location.href = "/login"
+          throw new Error("Permission Denied")
+        }
+      }),
     onSuccess: () => {
       toast({
         title: "Success",
@@ -43,7 +48,7 @@ export default function BookCardContainer({ data }: BookCardItemProps) {
     },
     onError: (error: any) => {
       toast({
-        title: "Error cancelling order",
+        title: "Please login before submitting order",
         description: error.message,
       })
     },

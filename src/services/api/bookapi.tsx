@@ -75,7 +75,7 @@ export async function postBookOrder(user_id: string, book_id: string) {
   })
 
   const result = await res.json()
-  console.log(result)
+
   return result
 }
 
