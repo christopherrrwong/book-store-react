@@ -59,8 +59,6 @@ export async function postFilteredBookList(
 }
 
 export async function postBookOrder(user_id: string, book_id: string) {
-  console.log("api called")
-  console.log(user_id, book_id)
   const res = await fetch(`${source}/book/order`, {
     method: "POST",
     headers: {

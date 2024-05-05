@@ -53,8 +53,6 @@ export function UserSettingForm() {
   const data = getUserInfo(user_id)
   const user_data = data[0]
 
-  console.log(user_data)
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
